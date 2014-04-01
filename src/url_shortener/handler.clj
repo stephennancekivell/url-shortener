@@ -1,4 +1,4 @@
-(ns hello-world.handler
+(ns url-shortener.handler
   (:use compojure.core)
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
@@ -21,7 +21,15 @@
      "Location" (geturl key)}
    :body (geturl key)})
 
+(defn index []
+  {:status 302
+   :headers {
+     "Content-Type" "text/html; charset=utf-8"
+     "Location" "/r/index.html"}
+  })
+
 (defroutes app-routes
+  (GET "/" [] (index))
   (GET "/:id" [id] (geturl302 id))
   (POST "/:id" [id :as r]
         (saveurl id (slurp (:body r))))
