@@ -14,19 +14,16 @@
 (defn geturl [key]
   (wcar* (car/get key)))
 
-(defn geturl302 [key]
+(defn serve302 [url]
   {:status 302
    :headers {
      "Content-Type" "text/html; charset=utf-8"
-     "Location" (geturl key)}
-   :body (geturl key)})
-
-(defn index []
-  {:status 302
-   :headers {
-     "Content-Type" "text/html; charset=utf-8"
-     "Location" "/r/index.html"}
+     "Location" url}
   })
+
+(defn geturl302 [key] (serve302 (geturl key)))
+
+(defn index [] (serve302 "/r/index.html"))
 
 (defroutes app-routes
   (GET "/" [] (index))
