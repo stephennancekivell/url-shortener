@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Url Shortener</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+
+      function generate(){
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < 5; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+      };
+
+      function mysubmit(){
+        var inputUrl = $('#input-url').val();
+        var shortUrl = $('#short-url').val();
+        $.ajax({
+          type: 'POST',
+          url: '/'+shortUrl,
+          processData: false,
+          contentType: 'text/plain',
+          data: maybeAddPrefix(inputUrl)
+        }).done(function ok(){
+          $("#output").show();
+          var anch = $('#output #link');
+          anch.attr('href', "../"+shortUrl);
+          anch.text(shortUrl);
+        }).fail(function(data){
+          console.log('error creating url\n'+data);
+        });
+      };
+
+      function maybeAddPrefix(inputUrl){
+        var prefix = 'http://';
+        if (inputUrl.toLowerCase().indexOf(prefix) === -1){
+          return prefix + inputUrl;
+        } else {
+          return inputUrl;
+        }
+      };
+
+      function mkshort(){
+        console.log('mkshort');
+        var inputUrl = $('#input-url').val();
+        var shortUrl = $('#short-url').val();
+        if (shortUrl.length > 0 || inputUrl.length === 0) {
+          console.log('not making short url');
+          return;
+        }
+
+        $('#short-url').val(generate());
+      }
+    </script>
+    <style type="text/css">
+      .heading {
+        min-height: 100px;
+        margin-top: 30px;
+      }
+
+      #input {
+        padding-bottom: 30px;
+      }
+
+      #output {
+        display:none;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container heading">
+      <h1>Url Shortener</h1>
+    </div>
+    <div class="container" id="input">
+      <h3>make your link short</h3>
+      <form onsubmit="mysubmit(); return false;" action="#">
+        <div class="form-group">
+          <label for="inputUrl">Url</label>
+          <input type="text" id="input-url" onchange="mkshort();" class="form-control"></input>
+        </div>
+        <div class="form-group">
+          <label for="preview">Preview</label>
+          <input type="text" id="short-url" class="form-control"></input>
+        </div>
+        <input type="submit" class="btn btn-default" value="Create"/>
+        <button onclick="submit();" class="btn btn-default">Copy to clipboard</button>
+      </form>
+      <div class="well" id="output">
+        <h3>Short Url</h3>
+        <h4><a id="link" href="#"></a></h4>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script> -->
+  </body>
+</html>
