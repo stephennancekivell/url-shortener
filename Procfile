@@ -1,1 +1,1 @@
-web: lein run -m url-shortener.handler $PORT
+web: lein ring server $PORT
