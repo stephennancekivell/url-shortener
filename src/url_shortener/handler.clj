@@ -3,10 +3,10 @@
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [taoensso.carmine :as car :refer (wcar)]
-            [ring.adapter.jetty :as jetty]))
+            [ring.adapter.jetty :as jetty]
+            [environ.core :as env]))
 
-
-(def server1-conn {:pool {} :spec {:host "127.0.0.1" :port 6379}}); See `wcar` docstring for opts
+(def server1-conn {:pool {} :spec {:uri (env/env :rediscloud-url)}}); See `wcar` docstring for opts
 (defmacro wcar* [& body] `(car/wcar server1-conn ~@body))
 
 (defn saveurl [key val]
